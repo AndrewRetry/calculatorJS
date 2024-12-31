@@ -41,33 +41,76 @@ let equalBtn = document.querySelector("#btnEquals");
 const operatorButtons = document.querySelectorAll(".operatorBtn")
 const numButtons = document.querySelectorAll(".numBtn")
 
-let operatorType = null
-
 // declare variable for display value
 editableDisplay.textContent = "0"
+
+let isResultDisplayed = false
 
 numButtons.forEach(button => {
     button.addEventListener("click", () => {
 
         const numValue = button.textContent
-        if (!operatorButtons) {
-            if (editableDisplay.textContent == "0") {
-                editableDisplay.textContent = numValue;
-            } else {
-                editableDisplay.textContent += numValue;
-            }
+        
+        if (isResultDisplayed && !operatorCurrent) {
+            editableDisplay.textContent = numValue; // Start fresh after operator
+            num1Current = parseFloat(numValue)
+            isResultDisplayed = false
+        } else if (editableDisplay.textContent === "0" || isSecondNumberInput){
+            editableDisplay.textContent += numValue; // Append digits
+            isSecondNumberInput = false
+        } else {
+            editableDisplay.textContent += numValue
+        }
 
-            // if hasn't picked operator (i.e. filling up num2), update num1
+        // Update num1 or num2 based on operator state
+        if (!operatorCurrent) {
             num1Current = parseFloat(editableDisplay.textContent);
+        } else {
+            num2Current = parseFloat(editableDisplay.textContent);
         }
     });
 });
 
-// event handler if operator button is clicked
+let result = null
+// event handler if equal button is clicked
+
+equalBtn.addEventListener("click", () => {
+    if (num1Current !== null && num2Current !== null && operatorCurrent) {
+        result = operate(num1Current, num2Current, operatorCurrent);
+        if (isNaN(result) || result === Infinity) {
+            editableDisplay.textContent = "Error";
+            num1Current = null
+        } else {
+            editableDisplay.textContent = result
+            num1Current = result};
+        
+        num2Current = null
+        operatorCurrent = null
+        
+    } else if (num1Current !== null && num2Current === null && !operatorCurrent) {
+        result = num1Current
+        editableDisplay.textContent = result
+    }
+    isResultDisplayed = true
+});
+
 operatorButtons.forEach(button => {
     button.addEventListener("click", () => {
-        operatorType = button.textContent
-        
-        
-    });
-});
+        if (operatorCurrent && num2Current !== null) {
+            result = operate(num1Current, num2Current, operatorCurrent)
+            if (isNaN(result) || result == Infinity) {
+                editableDisplay.textContent = "Error"
+                num1Current = null;
+                num2Current = null;
+                operatorCurrent = null;
+                return;
+            }
+            editableDisplay.textContent = result
+            num1Current = result
+        } 
+        operatorCurrent = button.textContent
+        num2Current = null
+        isSecondNumberInput = true
+    })
+})
+
