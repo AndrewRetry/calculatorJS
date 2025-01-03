@@ -55,28 +55,45 @@ const numButtons = document.querySelectorAll(".numBtn")
 editableDisplay.textContent = "0"
 
 let isResultDisplayed = false
+
 function hasDecimal(string) {
     return string.includes(".")
+}
+
+const MAX_DISPLAY_LENGTH = 12;
+
+function formatNumber(num) {
+    if (num.toString().length > MAX_DISPLAY_LENGTH) {
+        return num.toExponential(5)
+    }
+    return num.toString();
+}
+
+function updateEditableDisplay(num) {
+    editableDisplay.textContent = formatNumber(num);
 }
 
 numButtons.forEach(button => {
     button.addEventListener("click", () => {
 
         const numValue = button.textContent
-        
+
         if (isResultDisplayed && !operatorCurrent) {
-            editableDisplay.textContent = numValue; // Start fresh after operator
-            num1Current = parseFloat(numValue)
-            isResultDisplayed = false
+
+            editableDisplay.textContent = numValue; // Start fresh after display results
+            num1Current = parseFloat(numValue);
+            isResultDisplayed = false;
+
         } else if (editableDisplay.textContent === "0" || isSecondNumberInput){
+            // replace "0" or start input value for num2Current 
             editableDisplay.textContent = numValue; // Append digits
-            isSecondNumberInput = false
+            isSecondNumberInput = false;
+
         } else {
-            if ((hasDecimal(editableDisplay.textContent) && numValue !== ".") || (!hasDecimal(editableDisplay.textContent))) {
-                editableDisplay.textContent += numValue
-            }
-            if (!isResultDisplayed) {
-                displayCurrent.textContent = ``
+            // Append digit to current entry
+            if (((hasDecimal(editableDisplay.textContent) && numValue !== ".") || (!hasDecimal(editableDisplay.textContent))) && 
+            editableDisplay.textContent.length <= MAX_DISPLAY_LENGTH) {
+                editableDisplay.textContent += numValue;
             }
         }
 
@@ -85,8 +102,11 @@ numButtons.forEach(button => {
             num1Current = parseFloat(editableDisplay.textContent);
         } else {
             num2Current = parseFloat(editableDisplay.textContent);
+            // Keep displayCurrent text intact if entering num2Current
+            if (!displayCurrent.textContent.includes("=")) {
+                displayCurrent.textContent = `${num1Current} ${operatorCurrent}`;
+            }
         }
-
 
         updateClearBtn();
     });
@@ -109,7 +129,7 @@ equalBtn.addEventListener("click", () => {
             isResultDisplayed = false;
             return;
         } else {
-            editableDisplay.textContent = result
+            updateEditableDisplay(result)
             num1Current = result
         };
         
@@ -171,9 +191,7 @@ clearBtn.addEventListener("click", () => {
         // Clear Entry (CE): Only clear the current editable display
         editableDisplay.textContent = "0"
         if (isSecondNumberInput) {
-            num2Current = null
-        } else {
-            num1Current = null
+            num2Current = null // Reset num2Current for re-entry
         }
     }
 

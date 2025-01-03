@@ -1,0 +1,113 @@
+body {
+    font-family: Arial, sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    margin: 0;
+    background-color: gray;
+}
+
+#calculatorName {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+    font-family: Georgia, 'Times New Roman', Times, serif;
+    font-weight: bolder;
+    color: whitesmoke;
+}
+
+.motherBox {
+    width: 300px;
+    background-color: #191919;
+    border: 2px solid #ccc;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    padding: 10px 5px 20px 5px;
+}
+
+.displayTextContainer {
+    padding: 10px;
+    background-color: rgb(0, 0, 0);
+    color: rgb(3, 105, 3);
+    text-align: right;
+    border-radius: 10px;
+    margin-bottom: 10px;
+    font-family: 'Courier New', Courier, monospace;
+}
+
+.display {
+    font-size: 1.4rem;
+    min-height: 50px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    
+}
+
+.buttonContainer {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.buttonRow {
+    display: flex;
+    justify-content: space-between;
+    gap: 5px;
+}
+
+
+.button {
+    width: 100%;
+    height: 50px;
+    font-size: 1.2rem;
+    border: none;
+    cursor: pointer;    
+    background-color: rgb(50, 50, 50);
+    color: whitesmoke;
+    text-align: center;
+    border-radius: 5px;
+    box-shadow: 0 3px 2px rgb(24, 24, 24);
+    transition: all 0.2s ease; 
+}
+
+.button:hover {
+    background-color: rgb(68, 68, 68);
+}
+
+.button:active {
+    transform: translateY(2px);
+    box-shadow: 0 1px 2px;
+}
+
+#btnEquals {
+    background-color: #37893b;
+    color: white;
+    grid-column: span 4;
+}
+#btnEquals:hover {
+    background-color: #43a047;
+}
+
+#btnClear {
+    background-color: #e53935;
+    color: white;
+}
+
+#btnClear:hover {
+    background-color: #d32f2f;
+}
+
+#btnUndo {
+    background-color: #ffa726;
+    color: white;
+}
+
+#btnUndo:hover {
+    background-color: #fb8c00;
+}
