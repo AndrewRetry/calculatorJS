@@ -1,21 +1,21 @@
 function addNum(num1, num2) {
-    return num1 + num2
+    return Math.round((num1 + num2) * 1e8 ) / 1e8;
 }
 
 function subtractNum(num1, num2) {
-    return num1 - num2
+    return Math.round((num1 - num2) * 1e8 ) / 1e8;
 }
 
 function multiplyNum(num1, num2) {
-    return Math.round(num1 * num2, 8)
+    return Math.round((num1 * num2) * 1e8 ) / 1e8;
 }
 
 function divideNum(num1, num2) {
-    return Math.round(num1 / num2, 8)
+    return Math.round((num1 / num2) * 1e8 ) / 1e8;
 }
 
 function exponentNum(num1, num2) {
-    return Math.round(num1 ** num2, 8)
+    return Math.round((num1 ** num2) * 1e8 ) / 1e8;
 }
 
 let num1Current = 0
@@ -36,8 +36,18 @@ function operate(num1, num2, operator) {
     }
 }
 
+function updateClearBtn() {
+    if (editableDisplay.textContent === "0") {
+        clearBtn.textContent = "C" // Full Reset
+    } else {
+        clearBtn.textContent = "CE" // Clear Current Entry (clear currentEditable)
+    }
+}
 let editableDisplay = document.querySelector("#displayCurrentEditable")
+let displayCurrent = document.querySelector("#displayCurrent")
+
 let equalBtn = document.querySelector("#btnEquals");
+let clearBtn = document.querySelector("#btnClear")
 const operatorButtons = document.querySelectorAll(".operatorBtn")
 const numButtons = document.querySelectorAll(".numBtn")
 
@@ -45,6 +55,9 @@ const numButtons = document.querySelectorAll(".numBtn")
 editableDisplay.textContent = "0"
 
 let isResultDisplayed = false
+function hasDecimal(string) {
+    return string.includes(".")
+}
 
 numButtons.forEach(button => {
     button.addEventListener("click", () => {
@@ -56,10 +69,13 @@ numButtons.forEach(button => {
             num1Current = parseFloat(numValue)
             isResultDisplayed = false
         } else if (editableDisplay.textContent === "0" || isSecondNumberInput){
-            editableDisplay.textContent += numValue; // Append digits
+            editableDisplay.textContent = numValue; // Append digits
             isSecondNumberInput = false
         } else {
-            editableDisplay.textContent += numValue
+            if ((hasDecimal(editableDisplay.textContent) && numValue !== ".") || (!hasDecimal(editableDisplay.textContent))) {
+                editableDisplay.textContent += numValue
+            }
+            
         }
 
         // Update num1 or num2 based on operator state
@@ -68,6 +84,8 @@ numButtons.forEach(button => {
         } else {
             num2Current = parseFloat(editableDisplay.textContent);
         }
+
+        updateClearBtn();
     });
 });
 
@@ -76,22 +94,37 @@ let result = null
 
 equalBtn.addEventListener("click", () => {
     if (num1Current !== null && num2Current !== null && operatorCurrent) {
+        // Perform the operation when all values are present
         result = operate(num1Current, num2Current, operatorCurrent);
+        displayCurrent.textContent = `${num1Current} ${operatorCurrent} ${num2Current} = `;
         if (isNaN(result) || result === Infinity) {
             editableDisplay.textContent = "Error";
             num1Current = null
         } else {
             editableDisplay.textContent = result
-            num1Current = result};
+            num1Current = result
+        };
         
-        num2Current = null
-        operatorCurrent = null
-        
-    } else if (num1Current !== null && num2Current === null && !operatorCurrent) {
-        result = num1Current
-        editableDisplay.textContent = result
+
+    } else if (num1Current !== null && num2Current === null){
+        if (!operatorCurrent) {
+            // No operator selected, display num1Current
+            result = num1Current
+            editableDisplay.textContent = result
+            displayCurrent.textContent = `${result} = `
+        } else {
+            // If operator exists but num2Current is null, assume num2Current = num1Current
+            num2Current = num1Current
+            result = operate(num1Current, num2Current, operatorCurrent)
+            displayCurrent.textContent = `${num1Current} ${operatorCurrent} ${num2Current} = `;
+            editableDisplay.textContent = result
+            num1Current = result;
+        }
     }
-    isResultDisplayed = true
+    num2Current = null;
+    operatorCurrent = null;
+    isResultDisplayed = true;
+    updateClearBtn();
 });
 
 operatorButtons.forEach(button => {
@@ -111,6 +144,30 @@ operatorButtons.forEach(button => {
         operatorCurrent = button.textContent
         num2Current = null
         isSecondNumberInput = true
+        displayCurrent.textContent = `${num1Current} ${operatorCurrent}`
+        updateClearBtn();
     })
+})
+
+clearBtn.addEventListener("click", () => {
+    if (displayCurrent.textContent.includes("=") || editableDisplay.textContent === "0") {
+        // Full Clear (C): Clear all states and displays
+        displayCurrent.textContent = ``
+        editableDisplay.textContent = "0"
+        num1Current = null
+        num2Current = null
+        operatorCurrent = null
+        isSecondNumberInput = false
+        isResultDisplayed = false
+    } else {
+        // Clear Entry (CE): Only clear the current editable display
+        editableDisplay.textContent = "0"
+        if (isSecondNumberInput) {
+            num2Current = null
+        } else {
+            num1Current = null
+        }
+    }
+    updateClearBtn();
 })
 
