@@ -176,6 +176,7 @@ clearBtn.addEventListener("click", () => {
             num1Current = null
         }
     }
+
     updateClearBtn();
 })
 
@@ -203,5 +204,42 @@ undoBtn.addEventListener("click", () => {
                 num1Current = parseFloat(editableDisplay.textContent)
             } else editableDisplay.textContent = "0"
         }
+    }
+})
+
+const keyMap = {
+    "0" : "btn0",
+    "1": "btn1",
+    "2": "btn2",
+    "3": "btn3",
+    "4": "btn4",
+    "5": "btn5",
+    "6": "btn6",
+    "7": "btn7",
+    "8": "btn8",
+    "9": "btn9",
+    ".": "btnDecimal",
+    "+": "btnAdd",
+    "-": "btnSubtract",
+    "*": "btnMultiply",
+    "x": "btnMultiply", // Allow "x" as multiplication
+    "/": "btnDivide",
+    "^": "btnExponent",
+    "Enter": "btnEquals",
+    "=": "btnEquals",
+    "Backspace": "btnUndo",
+    "Escape": "btnClear",
+}
+
+document.addEventListener("keypress", (event) => {
+    const key = event.key
+    const buttonId = keyMap[key]
+
+    if (buttonId) {
+        const button = document.querySelector(buttonId)
+        if (button) button.click(); // simulate click
+    }
+    if (["Enter", "Backspace"].includes(key)) {
+        event.preventDefault(); // prevent default behavior
     }
 })
