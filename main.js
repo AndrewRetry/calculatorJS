@@ -75,7 +75,9 @@ numButtons.forEach(button => {
             if ((hasDecimal(editableDisplay.textContent) && numValue !== ".") || (!hasDecimal(editableDisplay.textContent))) {
                 editableDisplay.textContent += numValue
             }
-            
+            if (!isResultDisplayed) {
+                displayCurrent.textContent = ``
+            }
         }
 
         // Update num1 or num2 based on operator state
@@ -84,6 +86,7 @@ numButtons.forEach(button => {
         } else {
             num2Current = parseFloat(editableDisplay.textContent);
         }
+
 
         updateClearBtn();
     });
@@ -99,7 +102,12 @@ equalBtn.addEventListener("click", () => {
         displayCurrent.textContent = `${num1Current} ${operatorCurrent} ${num2Current} = `;
         if (isNaN(result) || result === Infinity) {
             editableDisplay.textContent = "Error";
-            num1Current = null
+            num1Current = null;
+            num2Current = null;
+            operatorCurrent = null;
+            isSecondNumberInput = false;
+            isResultDisplayed = false;
+            return;
         } else {
             editableDisplay.textContent = result
             num1Current = result
@@ -171,3 +179,29 @@ clearBtn.addEventListener("click", () => {
     updateClearBtn();
 })
 
+const undoBtn = document.querySelector("#btnUndo")
+
+function removeLastLetter(string) {
+    if (string.length > 1) return string.slice(0,-1);
+    else return "0";
+}
+
+undoBtn.addEventListener("click", () => {
+    if (isResultDisplayed) {
+        displayCurrent.textContent = ``
+        num1Current = result
+    } else {
+        //
+        if (num1Current && operatorCurrent) {
+            if(num2Current) {
+                editableDisplay.textContent = removeLastLetter(editableDisplay.textContent)
+                num2Current = parseFloat(editableDisplay.textContent)
+            } else editableDisplay.textContent = "0"
+        } else{
+            if(num1Current === parseFloat(editableDisplay.textContent)) {
+                editableDisplay.textContent = removeLastLetter(editableDisplay.textContent)
+                num1Current = parseFloat(editableDisplay.textContent)
+            } else editableDisplay.textContent = "0"
+        }
+    }
+})
