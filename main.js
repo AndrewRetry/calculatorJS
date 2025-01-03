@@ -249,15 +249,19 @@ const keyMap = {
     "Escape": "btnClear",
 }
 
-document.addEventListener("keypress", (event) => {
+document.addEventListener("keydown", (event) => {
     const key = event.key
     const buttonId = keyMap[key]
 
     if (buttonId) {
-        const button = document.querySelector(buttonId)
-        if (button) button.click(); // simulate click
+        const button = document.querySelector(`#${buttonId}`)
+        if (button) {
+            button.click();
+            event.preventDefault();
+        } // simulate click
+        
     }
-    if (["Enter", "Backspace"].includes(key)) {
+    if (key === "Escape" || key === "Backspace") {
         event.preventDefault(); // prevent default behavior
     }
-})
+});
